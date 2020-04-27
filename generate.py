@@ -52,7 +52,7 @@ def get_grammar(start, grammar):
 
 def get_grammar_string(template, verbs, subject_nouns, object_nouns,
         position_nouns, prepositions, adverbs1, adverbs2, proper_nouns,
-        quantity_nouns, conjunctions):
+        quantity_nouns, quantity_subject_nouns, relative_pronouns, conjunctions):
     """
     Generate a Feature-Based Grammar and output valid starting symbol rules for
     that grammar.
@@ -62,6 +62,7 @@ def get_grammar_string(template, verbs, subject_nouns, object_nouns,
 
     grammar = f"""
         VP[AGR=?a] -> V[AGR=?a]
+        REL_poss[AGR=?a] -> REL_pn NP_obj[AGR=?a] VP[AGR=?a]
         NP[AGR='sg'] -> {subject_nouns["singular"]}
         NP[AGR='pl'] -> {subject_nouns["plural"]}
         NP_obj[AGR='sg'] -> {object_nouns["singular"]}
@@ -78,6 +79,8 @@ def get_grammar_string(template, verbs, subject_nouns, object_nouns,
         NP_pos -> {position_nouns["singular"]}
         QNTY[AGR='sg'] -> {quantity_nouns["singular"]}
         QNTY[AGR='pl'] -> {quantity_nouns["plural"]}
+        QNTY_subj -> {quantity_subject_nouns["quantity_subject_noun"]}
+        REL_pn -> 'van wie'
         DET[AGR='pl'] -> 'de'
         DET[AGR='sg'] -> ' '
     """
@@ -86,54 +89,67 @@ def get_grammar_string(template, verbs, subject_nouns, object_nouns,
     compl = "NP_obj[AGR='sg']"
 
     if template == "simple":
-        sg_correct = f"S -> DET[AGR='sg'] NP[AGR='sg']'*' VP[AGR='sg']'^' {compl}"
-        pl_correct = f"S -> DET[AGR='pl'] NP[AGR='pl']'*' VP[AGR='pl']'^' {compl}"
-        sg_incorrect = f"S -> DET[AGR='sg'] NP[AGR='sg']'*' VP[AGR='pl']'^' {compl}"
-        pl_incorrect = f"S -> DET[AGR='pl'] NP[AGR='pl']'*' VP[AGR='sg']'^' {compl}"
+        sg_correct = f"S -> NP[AGR='sg']'*' VP[AGR='sg']'^' {compl}"
+        pl_correct = f"S -> NP[AGR='pl']'*' VP[AGR='pl']'^' {compl}"
+        sg_incorrect = f"S -> NP[AGR='sg']'*' VP[AGR='pl']'^' {compl}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' VP[AGR='sg']'^' {compl}"
 
     elif template == "adv":
         sg_correct = f"S -> NP[AGR='sg']'*' VP[AGR='sg']'^' {compl} {adv}"
-        pl_correct = f"S -> DET NP[AGR='pl']'*' VP[AGR='pl']'^' {compl} {adv}"
+        pl_correct = f"S -> NP[AGR='pl']'*' VP[AGR='pl']'^' {compl} {adv}"
         sg_incorrect = f"S -> NP[AGR='sg']'*' VP[AGR='pl']'^' {compl} {adv}"
-        pl_incorrect = f"S -> DET NP[AGR='pl']'*' VP[AGR='sg']'^' {compl} {adv}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' VP[AGR='sg']'^' {compl} {adv}"
 
     elif template == "adv_adv":
         adv = "ADV2 ADV1"
         sg_correct = f"S -> NP[AGR='sg']'*' VP[AGR='sg']'^' {compl} {adv}"
-        pl_correct = f"S -> DET NP[AGR='pl']'*' VP[AGR='pl']'^' {compl} {adv}"
+        pl_correct = f"S -> NP[AGR='pl']'*' VP[AGR='pl']'^' {compl} {adv}"
         sg_incorrect = f"S -> NP[AGR='sg']'*' VP[AGR='pl']'^' {compl} {adv}"
-        pl_incorrect = f"S -> DET NP[AGR='pl']'*' VP[AGR='sg']'^' {compl} {adv}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' VP[AGR='sg']'^' {compl} {adv}"
 
     elif template == "adv_conjunction":
         adv = "ADV1 CONJ ADV1"
         sg_correct = f"S -> NP[AGR='sg']'*' VP[AGR='sg']'^' {compl} {adv}"
-        pl_correct = f"S -> DET NP[AGR='pl']'*' VP[AGR='pl']'^' {compl} {adv}"
+        pl_correct = f"S -> NP[AGR='pl']'*' VP[AGR='pl']'^' {compl} {adv}"
         sg_incorrect = f"S -> NP[AGR='sg']'*' VP[AGR='pl']'^' {compl} {adv}"
-        pl_incorrect = f"S -> DET NP[AGR='pl']'*' VP[AGR='sg']'^' {compl} {adv}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' VP[AGR='sg']'^' {compl} {adv}"
 
     elif template == "name_pp":
         sg_correct = f"S -> NP[AGR='sg']'*' PP_pn VP[AGR='sg']'^' {compl}"
-        pl_correct = f"S -> DET NP[AGR='pl']'*' PP_pn VP[AGR='pl']'^' {compl}"
+        pl_correct = f"S -> NP[AGR='pl']'*' PP_pn VP[AGR='pl']'^' {compl}"
         sg_incorrect = f"S -> NP[AGR='sg']'*' PP_pn VP[AGR='pl']'^' {compl}"
-        pl_incorrect = f"S -> DET NP[AGR='pl']'*' PP_pn VP[AGR='sg']'^' {compl}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' PP_pn VP[AGR='sg']'^' {compl}"
 
     elif template == "noun_pp":
         sg_correct = f"S -> NP[AGR='sg']'*' PP VP[AGR='sg']'^' {compl}"
-        pl_correct = f"S -> DET NP[AGR='pl']'*' PP VP[AGR='pl']'^' {compl}"
+        pl_correct = f"S -> NP[AGR='pl']'*' PP VP[AGR='pl']'^' {compl}"
         sg_incorrect = f"S -> NP[AGR='sg']'*' PP VP[AGR='pl']'^' {compl}"
-        pl_incorrect = f"S -> DET NP[AGR='pl']'*' PP VP[AGR='sg']'^' {compl}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' PP VP[AGR='sg']'^' {compl}"
 
     elif template == "noun_pp_adv":
         sg_correct = f"S -> NP[AGR='sg']'*' PP VP[AGR='sg']'^' {compl} {adv}"
-        pl_correct = f"S -> DET NP[AGR='pl']'*' PP VP[AGR='pl']'^' {compl} {adv}"
+        pl_correct = f"S -> NP[AGR='pl']'*' PP VP[AGR='pl']'^' {compl} {adv}"
         sg_incorrect = f"S -> NP[AGR='sg']'*' PP VP[AGR='pl']'^' {compl} {adv}"
-        pl_incorrect = f"S -> DET NP[AGR='pl']'*' PP VP[AGR='sg']'^' {compl} {adv}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' PP VP[AGR='sg']'^' {compl} {adv}"
 
     elif template == "qnty_simple":
-        sg_correct = f"S -> QNTY[AGR='sg'] NP[AGR='pl']'*' VP[AGR='sg']'^' {compl}"
-        pl_correct = f"S -> QNTY[AGR='pl'] NP[AGR='pl']'*' VP[AGR='pl']'^' {compl}"
-        sg_incorrect = f"S -> QNTY[AGR='sg'] NP[AGR='pl']'*' VP[AGR='pl']'^' {compl}"
-        pl_incorrect = f"S -> QNTY[AGR='pl'] NP[AGR='pl']'*' VP[AGR='sg']'^' {compl}"
+        sg_correct = f"S -> QNTY[AGR='sg']'*' QNTY_subj VP[AGR='sg']'^' {compl}"
+        pl_correct = f"S -> QNTY[AGR='pl']'*' QNTY_subj VP[AGR='pl']'^' {compl}"
+        sg_incorrect = f"S -> QNTY[AGR='sg']'*' QNTY_subj VP[AGR='pl']'^' {compl}"
+        pl_incorrect = f"S -> QNTY[AGR='pl']'*' QNTY_subj VP[AGR='sg']'^' {compl}"
+
+    elif template == "rel_clause_sg":
+        sg_correct = f"S -> NP[AGR='sg']'*' REL_poss[AGR='sg'] VP[AGR='sg']'^' {compl}"
+        pl_correct = f"S -> NP[AGR='pl']'*' REL_poss[AGR='sg'] VP[AGR='pl']'^' {compl}"
+        sg_incorrect = f"S -> NP[AGR='sg']'*' REL_poss[AGR='sg'] VP[AGR='pl']'^' {compl}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' REL_poss[AGR='sg'] VP[AGR='sg']'^' {compl}"
+
+    elif template == "rel_clause_pl":
+        sg_correct = f"S -> NP[AGR='sg']'*' REL_poss[AGR='pl'] VP[AGR='sg']'^' {compl}"
+        pl_correct = f"S -> NP[AGR='pl']'*' REL_poss[AGR='pl'] VP[AGR='pl']'^' {compl}"
+        sg_incorrect = f"S -> NP[AGR='sg']'*' REL_poss[AGR='pl'] VP[AGR='pl']'^' {compl}"
+        pl_incorrect = f"S -> NP[AGR='pl']'*' REL_poss[AGR='pl'] VP[AGR='sg']'^' {compl}"
+
 
     return grammar, sg_correct, pl_correct, sg_incorrect, pl_incorrect
 
@@ -144,13 +160,13 @@ def generate_dataset(grammar, sg_correct, pl_correct, sg_incorrect,
     """
     # We need one grammar for generation and all parsers for classification
     # grammar_sg_correct, parser_sg_correct = get_grammar(grammar, sg_correct)
-    _, parser_sg_correct = get_grammar(grammar, sg_correct)
-    grammar_sg_correct, parser_pl_correct = get_grammar(grammar, pl_correct)
+    grammar_sg_correct, parser_sg_correct = get_grammar(grammar, sg_correct)
+    _, parser_pl_correct = get_grammar(grammar, pl_correct)
     _, parser_sg_incorrect = get_grammar(grammar, sg_incorrect)
     _, parser_pl_incorrect = get_grammar(grammar, pl_incorrect)
 
     data, data_correct, data_incorrect = [], [], []
-    for sentence in generate(grammar_sg_correct, n=1000000):
+    for sentence in generate(grammar_sg_correct, n=10000):
         data.append(sentence)
 
     for sent in tqdm(data):
@@ -190,15 +206,18 @@ if __name__ == "__main__":
     proper_nouns = read_words("vocabulary/proper_nouns.csv")
     subject_nouns = read_words("vocabulary/subject_nouns.csv")
     quantity_nouns = read_words("vocabulary/quantity_nouns.csv")
+    quantity_subject_nouns = read_words("vocabulary/quantity_subject_nouns.csv")
+    relative_pronouns = read_words("vocabulary/relative_pronouns.csv")
     verbs = read_words("vocabulary/verbs.csv")
 
-    template = "simple"
+    template = "rel_clause_sg"
 
     print("Generating data. This may take a while.")
     grammar, sg_correct, pl_correct, sg_incorrect, pl_incorrect = \
         get_grammar_string(template, verbs, subject_nouns,
                            object_nouns, position_nouns, prepositions,
                            adverbs1, adverbs2, proper_nouns, quantity_nouns,
+                           quantity_subject_nouns, relative_pronouns,
                            conjunctions)
 
 
