@@ -32,7 +32,7 @@ def read_words(filename, n=-1):
             columns[k].append(f"'{v}'")
 
     return {k: " | ".join(v) for k, v in columns.items()}
-    
+
 
 def generate_dataset(grammar, correct, incorrect):
     n_conditions = len(list(correct.keys())[0].split("_"))
@@ -92,8 +92,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--template", type=str, required=True,
                         choices=["simple", "nounpp", "nounpp_adv", "namepp",
-                                 "adv", "qnty_simple", "rel_sg", "rel_sg_adv",
-                                 "rel_pl", "rel_pl_adv", "verb_conj",
+                                 "adv", "qnty_simple", "verb_conj",
                                  "qnty_nounpp", "qnty_namepp", "that",
                                  "that_compl", "that_adv", "that_nounpp",
                                  "that_nounpp_adv", "noun_conj", "s_conj"],
