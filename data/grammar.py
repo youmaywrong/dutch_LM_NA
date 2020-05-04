@@ -73,153 +73,137 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
     """
 
     if template == "simple":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
-            correct[f"{subj_num}"] = f"S -> NP[AGR={subj_num}]'*' "\
-                    f"VP[AGR={subj_num}]'^' COMPL"
-            incorrect[f"{subj_num}"] = f"S -> NP[AGR={subj_num}]'*' "\
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
+            correct[f"{num}"] = f"S -> NP[AGR={num}]'*' "\
+                    f"VP[AGR={num}]'^' COMPL"
+            incorrect[f"{num}"] = f"S -> NP[AGR={num}]'*' "\
                     f"VP[AGR={wrong_num}]'^' COMPL"
 
     elif template == "adv":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
-            correct[f"{subj_num}"] = f"S -> NP[AGR={subj_num}]'*' "\
-                    f"VP[AGR={subj_num}]'^' COMPL ADV"
-            incorrect[f"{subj_num}"] = f"S -> NP[AGR={subj_num}]'*' "\
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
+            correct[f"{num}"] = f"S -> NP[AGR={num}]'*' "\
+                    f"VP[AGR={num}]'^' COMPL ADV"
+            incorrect[f"{num}"] = f"S -> NP[AGR={num}]'*' "\
                     f"VP[AGR={wrong_num}]'^' COMPL ADV"
 
     elif template == "namepp":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
-            correct[f"{subj_num}"] = f"S -> NP[AGR={subj_num}]'*' PP_pn "\
-                    f"VP[AGR={subj_num}]'^' COMPL"
-            incorrect[f"{subj_num}"] = f"S -> NP[AGR={subj_num}]'*' PP_pn "\
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
+            correct[f"{num}"] = f"S -> NP[AGR={num}]'*' PP_pn "\
+                    f"VP[AGR={num}]'^' COMPL"
+            incorrect[f"{num}"] = f"S -> NP[AGR={num}]'*' PP_pn "\
                     f"VP[AGR={wrong_num}]'^' COMPL"
 
     elif template == "qnty_simple":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
-            correct[f"{subj_num}"] = f"S -> QNTY[AGR={subj_num}]'*' QNTY_subj"\
-                    f" VP[AGR={subj_num}]'^' COMPL"
-            incorrect[f"{subj_num}"] = f"S -> QNTY[AGR={subj_num}]'*' QNTY_subj"\
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
+            correct[f"{num}"] = f"S -> QNTY[AGR={num}]'*' QNTY_subj"\
+                    f" VP[AGR={num}]'^' COMPL"
+            incorrect[f"{num}"] = f"S -> QNTY[AGR={num}]'*' QNTY_subj"\
                     f" VP[AGR={wrong_num}]'^' COMPL"
 
     elif template == "qnty_namepp":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
-            correct[f"{subj_num}"] = f"S -> QNTY[AGR={subj_num}]'*' QNTY_subj"\
-                    f" PP_pn VP[AGR={subj_num}]'^' COMPL"
-            incorrect[f"{subj_num}"] = f"S -> QNTY[AGR={subj_num}]'*' QNTY_subj"\
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
+            correct[f"{num}"] = f"S -> QNTY[AGR={num}]'*' QNTY_subj"\
+                    f" PP_pn VP[AGR={num}]'^' COMPL"
+            incorrect[f"{num}"] = f"S -> QNTY[AGR={num}]'*' QNTY_subj"\
                     f" PP_pn VP[AGR={wrong_num}]'^' COMPL"
 
     elif template == "nounpp":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
             for pp_num in conditions:
-                correct[f"{subj_num}_{pp_num}"] = f"S -> NP[AGR={subj_num}]"\
-                        f"'*' PP[AGR={pp_num}] VP[AGR={subj_num}]'^' COMPL"
-                incorrect[f"{subj_num}_{pp_num}"] = f"S -> NP[AGR={subj_num}]"\
+                correct[f"{num}_{pp_num}"] = f"S -> NP[AGR={num}]"\
+                        f"'*' PP[AGR={pp_num}] VP[AGR={num}]'^' COMPL"
+                incorrect[f"{num}_{pp_num}"] = f"S -> NP[AGR={num}]"\
                         f"'*' PP[AGR={pp_num}] VP[AGR={wrong_num}]'^' COMPL"
 
     elif template == "qnty_nounpp":
-        for subj_num in conditions:
-            wrong_num = get_opposite_number(subj_num)
+        for num in conditions:
+            wrong_num = get_opposite_number(num)
             for pp_num in conditions:
-                correct[f"{subj_num}_{pp_num}"] = f"S -> QNTY[AGR={subj_num}]"\
-                        f"'*' QNTY_subj PP[AGR={pp_num}] VP[AGR={subj_num}]'^'"\
+                correct[f"{num}_{pp_num}"] = f"S -> QNTY[AGR={num}]"\
+                        f"'*' QNTY_subj PP[AGR={pp_num}] VP[AGR={num}]'^'"\
                         f" COMPL"
-                incorrect[f"{subj_num}_{pp_num}"] = f"S -> QNTY[AGR={subj_num}]"\
+                incorrect[f"{num}_{pp_num}"] = f"S -> QNTY[AGR={num}]"\
                         f"'*' QNTY_subj PP[AGR={pp_num}] VP[AGR={wrong_num}]'^'"\
                         f" COMPL"
 
     elif template == "that":
-        for sec_num in conditions:
-            wrong_num = get_opposite_number(sec_num)
-            for first_num in conditions:
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            for num2 in conditions:
                 # Mention the second number first, as we are tracking the number
                 # agreement for that noun
-                correct[f"{sec_num}_{first_num}"] = f"S -> NP_obj[AGR={first_num}]"\
-                        f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' "\
-                        f"VP_intrans[AGR={sec_num}]'^' "
-                incorrect[f"{sec_num}_{first_num}"] = f"S -> NP_obj[AGR={first_num}]"\
-                        f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' "\
+                correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' "\
+                        f"VP_intrans[AGR={num2}]'^' "
+                incorrect[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' "\
                         f"VP_intrans[AGR={wrong_num}]'^'"
 
     elif template == "that_compl":
-        for sec_num in conditions:
-            wrong_num = get_opposite_number(sec_num)
-            for first_num in conditions:
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            for num2 in conditions:
                 # Mention the second number first, as we are tracking the number
                 # agreement for that noun
-                correct[f"{sec_num}_{first_num}"] = f"S -> NP_obj[AGR={first_num}]"\
-                        f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' COMPL "\
-                        f"VP[AGR={sec_num}]'^' "
-                incorrect[f"{sec_num}_{first_num}"] = f"S -> NP_obj[AGR={first_num}]"\
-                        f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' COMPL "\
+                correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
+                        f"VP[AGR={num2}]'^' "
+                incorrect[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
                         f"VP[AGR={wrong_num}]'^'"
 
     elif template == "that_adv":
-        for sec_num in conditions:
-            wrong_num = get_opposite_number(sec_num)
-            for first_num in conditions:
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            for num2 in conditions:
                 # Mention the second number first, as we are tracking the number
                 # agreement for that noun
-                correct[f"{sec_num}_{first_num}"] = f"S -> NP_obj[AGR={first_num}]"\
-                        f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' ADV COMPL "\
-                        f"VP[AGR={sec_num}]'^' "
-                incorrect[f"{sec_num}_{first_num}"] = f"S -> NP_obj[AGR={first_num}]"\
-                        f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' ADV COMPL "\
+                correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' ADV COMPL "\
+                        f"VP[AGR={num2}]'^' "
+                incorrect[f"{first1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' ADV COMPL "\
                         f"VP[AGR={wrong_num}]'^'"
 
     elif template == "that_nounpp":
-        for sec_num in conditions:
-            wrong_num = get_opposite_number(sec_num)
-            for first_num in conditions:
-                for third_num in conditions:
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            for num2 in conditions:
+                for num3 in conditions:
                     # Mention the second number first, as we are tracking the number
                     # agreement for that noun
-                    correct[f"{sec_num}_{first_num}_{third_num}"] =\
-                            f"S -> NP_obj[AGR={first_num}] "\
-                            f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' "\
-                            f"PP[AGR={third_num}] COMPL VP[AGR={sec_num}]'^' "
-                    incorrect[f"{sec_num}_{first_num}_{third_num}"] =\
-                            f"S -> NP_obj[AGR={first_num}] "\
-                            f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' "\
-                            f"PP[AGR={third_num}] COMPL VP[AGR={wrong_num}]'^' "\
-
-    elif template == "that_nounpp_adv":
-        for sec_num in conditions:
-            wrong_num = get_opposite_number(sec_num)
-            for first_num in conditions:
-                for third_num in conditions:
-                    # Mention the second number first, as we are tracking the number
-                    # agreement for that noun
-                    correct[f"{sec_num}_{first_num}_{third_num}"] =\
-                            f"S -> NP_obj[AGR={first_num}]"\
-                            f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' "\
-                            f"PP[AGR={third_num}] ADV COMPL VP[AGR={sec_num}]'^'"
-                    incorrect[f"{sec_num}_{first_num}_{third_num}"] =\
-                            f"S -> NP_obj[AGR={first_num}]"\
-                            f"V_that[AGR={first_num}] NP[AGR={sec_num}]'*' "\
-                            f"PP[AGR={third_num}] ADV COMPL VP[AGR={wrong_num}]'^'"\
+                    correct[f"{num1}_{num2}_{num3}"] =\
+                            f"S -> NP_obj[AGR={num2}] "\
+                            f"V_that[AGR={num2}] NP[AGR={num1}]'*' "\
+                            f"PP[AGR={num3}] COMPL VP[AGR={num1}]'^' "
+                    incorrect[f"{num1}_{num2}_{num3}"] =\
+                            f"S -> NP_obj[AGR={num2}] "\
+                            f"V_that[AGR={num2}] NP[AGR={num1}]'*' "\
+                            f"PP[AGR={num3}] COMPL VP[AGR={wrong_num}]'^' "\
 
     elif template == "noun_conj":
-        for subj1_num in conditions:
-            for subj2_num in conditions:
-                correct[f"{subj1_num}_{subj2_num}"] = f"S -> NP[AGR={subj1_num}]"\
-                        f" 'en' NP[AGR={subj2_num}]'*' VP[AGR='pl']'^' COMPL"
-                incorrect[f"{subj1_num}_{subj2_num}"] = f"S -> NP[AGR={subj1_num}]"\
-                        f" 'en' NP[AGR={subj2_num}]'*' VP[AGR='sg']'^' COMPL"
+        for num1 in conditions:
+            for num2 in conditions:
+                correct[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]"\
+                        f" 'en' NP[AGR={num2}]'*' VP[AGR='pl']'^' COMPL"
+                incorrect[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]"\
+                        f" 'en' NP[AGR={num2}]'*' VP[AGR='sg']'^' COMPL"
 
     elif template == "s_conj":
-        for subj1_num in conditions:
-            for subj2_num in conditions:
-                wrong_num = get_opposite_number(subj2_num)
-                correct[f"{subj1_num}_{subj2_num}"] = f"S -> NP[AGR={subj1_num}]"\
-                        f" VP[AGR={subj1_num}] 'en' NP[AGR={subj2_num}]'*' "\
-                        f"VP[AGR={subj2_num}]'^' COMPL"
-                incorrect[f"{subj1_num}_{subj2_num}"] = f"S -> NP[AGR={subj1_num}]"\
-                        f" VP[AGR={subj1_num}] 'en' NP[AGR={subj2_num}]'*' "\
+        for num1 in conditions:
+            for num2 in conditions:
+                wrong_num = get_opposite_number(num2)
+                correct[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]"\
+                        f" VP[AGR={num1}] 'en' NP[AGR={num2}]'*' "\
+                        f"VP[AGR={num2}]'^' COMPL"
+                incorrect[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]"\
+                        f" VP[AGR={num1}] 'en' NP[AGR={num2}]'*' "\
                         f"VP[AGR={wrong_num}]'^' COMPL"
 
     elif template == "rel_def":

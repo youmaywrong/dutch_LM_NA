@@ -13,7 +13,6 @@ declare -a templates=('adv'
                     'that_adv'
                     'that_compl'
                     'that_nounpp'
-                    'that_nounpp_adv'
                     'rel_def'
                     'rel_nondef'
                     'rel_def_obj'
@@ -21,5 +20,5 @@ declare -a templates=('adv'
 
 for task in ${templates[@]}; do
     echo Extracting predictions for $task
-    python extract_predictions.py -m model.pt -i data/tasks/$task --cuda
+    python predict.py -m model.pt -i data/tasks/$task.tsv --cuda
 done

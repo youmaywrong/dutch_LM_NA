@@ -24,18 +24,18 @@ if __name__ == "__main__":
     # Load data and convert all integers to strings
     data = pandas.read_csv(path, sep="\t", header=0).applymap(str)
     header = data.columns.values
-    n_conditions = sum("number" in col for col in header)
+    nums = sum("number" in col for col in header)
 
     separated_conditions, amounts = [], []
     options = ["singular", "plural"]
 
-    if n_conditions == 1:
+    if nums == 1:
         for num1 in options:
             curr_condition = data.loc[data["number1"] == num1]
             separated_conditions.append(curr_condition)
             amounts.append(min(args.number, len(curr_condition)))
 
-    elif n_conditions == 2:
+    elif nums == 2:
         for num1 in options:
             for num2 in options:
                 curr_condition = data.loc[(data["number1"] == num1) &\
@@ -43,7 +43,7 @@ if __name__ == "__main__":
                 separated_conditions.append(curr_condition)
                 amounts.append(min(args.number, len(curr_condition)))
 
-    elif n_conditions == 3:
+    elif nums == 3:
         for num1 in options:
             for num2 in options:
                 for num3 in options:
