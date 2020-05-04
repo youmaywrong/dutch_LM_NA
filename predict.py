@@ -86,7 +86,7 @@ def categorise_predictions(data, log_p_targets_correct, log_p_targets_wrong):
                 info[f"accuracy_{num1}_{num2}"] = np.mean(scores)
                 print(f"accuracy for {num1}_{num2}: {np.mean(scores) * 100}")
 
-    elif num == 3:
+    elif nums == 3:
         for num1 in options:
             for num2 in options:
                 for num3 in options:

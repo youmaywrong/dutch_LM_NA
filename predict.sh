@@ -1,14 +1,14 @@
 #!/bin/bash
 
-declare -a templates=('adv'
+declare -a templates=('simple'
+                    'adv'
+                    'nounpp'
                     'namepp'
                     'noun_conj'
-                    'nounpp'
-                    'qnty_namepp'
-                    'qnty_nounpp'
-                    'qnty_simple'
                     's_conj'
-                    'simple'
+                    'qnty_simple'
+                    'qnty_nounpp'
+                    'qnty_namepp'
                     'that'
                     'that_adv'
                     'that_compl'
@@ -17,7 +17,7 @@ declare -a templates=('adv'
                     'rel_nondef'
                     'rel_def_obj'
                     )
-
+                    
 for task in ${templates[@]}; do
     echo Extracting predictions for $task
     python predict.py -m model.pt -i data/tasks/$task.tsv --cuda
