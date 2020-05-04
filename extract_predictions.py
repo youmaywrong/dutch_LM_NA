@@ -17,7 +17,7 @@ parser.add_argument("-m", "--model", type=str, default="model.pt",
 parser.add_argument("-i", "--input", type=str, required=True,
     help="Input sentences (NA task)")
 parser.add_argument("-v", "--vocabulary", type=str,
-    default="vocabulary/vocab.txt", help="Vocabulary of the training corpus")
+    default="data/vocabulary/vocab.txt", help="Vocabulary of the training corpus")
 parser.add_argument("-o", "--output", default="output",
     help="Destination for the output")
 parser.add_argument("--eos", default="<eos>", help="End-of-sentence token")
@@ -34,7 +34,7 @@ def feed_input(model, hidden, w):
         inp = inp.cuda()
     out, hidden = model(inp, hidden)
     return out, hidden
-    
+
 def feed_sentence(model, h, sentence):
     outs = []
     for w in sentence:
@@ -61,8 +61,6 @@ log_p_targets_wrong = np.zeros((len(sentences), 1))
 
 model.load_state_dict(model_orig_state)
 init_sentence = " ".join([". <eos>"] * 5)
-
-output_fn = f"{args.output}.abl"
 
 hidden = model.init_hidden(1)
 init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "))
@@ -99,5 +97,7 @@ out = {
 print('\naccuracy: ' + str(100*score_on_task/len(sentences)) + '%\n')
 print('p_difference: %1.3f +- %1.3f' % (score_on_task_p_difference, score_on_task_p_difference_std))
 
-with open(output_fn, 'wb') as fout:
-    pickle.dump(out, fout, -1)
+template = args.input.split("/")[-1].replace("tsv", "")
+with open(os.path.join(args.output, f"{template}.abl"), "wb") as f:
+    pickle.dump(out, f, -1)
+print(f"Information saved to {args.output}/{template}.abl")
