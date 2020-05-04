@@ -102,9 +102,10 @@ if __name__ == "__main__":
                                  "adv", "qnty_simple", "verb_conj",
                                  "qnty_nounpp", "qnty_namepp", "that",
                                  "that_compl", "that_adv", "that_nounpp",
-                                 "that_nounpp_adv", "noun_conj", "s_conj"],
+                                 "that_nounpp_adv", "noun_conj", "s_conj",
+                                 "rel_def", "rel_def_obj", "rel_nondef"],
                         help="The template of the output sentences.")
-    parser.add_argument("-o", "--output", type=str, default="generated_data",
+    parser.add_argument("-o", "--output", type=str, default="full_data",
                         help="Directory to store the full generated data.")
     parser.add_argument("--sample", default=False)
     parser.add_argument("--adverbs1_num", type=int, default=-1,

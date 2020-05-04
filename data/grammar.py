@@ -1,5 +1,6 @@
 from collections import defaultdict
 import nltk
+import sys
 
 def get_grammar(start, grammar):
     """
@@ -70,7 +71,7 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         REL_pn -> 'van wie' | 'die'
         COMPL -> 'de persoon'
     """
-    
+
     if template == "simple":
         for subj_num in conditions:
             wrong_num = get_opposite_number(subj_num)
@@ -220,6 +221,31 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
                 incorrect[f"{subj1_num}_{subj2_num}"] = f"S -> NP[AGR={subj1_num}]"\
                         f" VP[AGR={subj1_num}] 'en' NP[AGR={subj2_num}]'*' "\
                         f"VP[AGR={wrong_num}]'^' COMPL"
+
+    elif template == "rel_def":
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            correct[f"{num1}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
+                    f"V_intrans[AGR={num1}] VP[AGR={num1}]'^' COMPL"
+            incorrect[f"{num1}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
+                    f"V_intrans[AGR={num1}] VP[AGR={wrong_num}]'^' COMPL"\
+
+    elif template == "rel_nondef":
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            correct[f"{num1}"] = f"S -> NP[AGR={num1}]'*' ',' 'die' "\
+                    f"V_intrans[AGR={num1}] ',' VP[AGR={num1}]'^' COMPL"
+            incorrect[f"{num1}"] = f"S -> NP[AGR={num1}]'*' ',' 'die' "\
+                    f"V_intrans[AGR={num1}] ',' VP[AGR={wrong_num}]'^' COMPL"\
+
+    elif template == "rel_def_obj":
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            for num2 in conditions:
+                correct[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
+                        f"NP_obj[AGR={num2}] VP[AGR={num2}] VP[AGR={num1}]'^' "
+                incorrect[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
+                        f"NP_obj[AGR={num2}] VP[AGR={num2}] VP[AGR={wrong_num}]'^' "
 
     else:
         sys.exit("No valid template")
