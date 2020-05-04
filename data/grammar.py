@@ -70,8 +70,7 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         REL_pn -> 'van wie' | 'die'
         COMPL -> 'de persoon'
     """
-    compl = "NP_obj[AGR='sg']"
-
+    
     if template == "simple":
         for subj_num in conditions:
             wrong_num = get_opposite_number(subj_num)

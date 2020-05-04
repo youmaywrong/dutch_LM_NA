@@ -6,6 +6,7 @@ import numpy as np
 import pickle
 import pandas
 import copy
+
 from tqdm import tqdm
 from torch.autograd import Variable
 
@@ -33,6 +34,7 @@ def feed_input(model, hidden, w):
         inp = inp.cuda()
     out, hidden = model(inp, hidden)
     return out, hidden
+    
 def feed_sentence(model, h, sentence):
     outs = []
     for w in sentence:
@@ -44,10 +46,6 @@ vocab = data.Dictionary(args.vocabulary)
 data = pandas.read_csv(f"{args.input}.tsv", sep="\t", header=0)
 sentences = data.loc[:, "agreement"]
 
-# correct, incorrect = [], []
-# for i in range(len(sentences)):
-#     correct.append(data.loc[i, "agreement"].split(" ")[data.loc[i, "verb_index"]])
-#     incorrect.append(data.loc[i, "disagreement"].split(" ")[data.loc[i, "verb_index"]])
 # Load model
 print(f"Loading model {args.model}")
 model = torch.load(args.model, map_location=lambda storage, loc: storage)

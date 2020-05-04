@@ -88,6 +88,13 @@ def post_process(sentence):
 
     return incomplete, str(subject_index), str(verb_index), complete
 
+# def sample_from_file(template):
+#     output_dir = "tasks"
+#     if not os.path.exists(output_dir):
+#         os.makedirs(output_dir)
+#         print(f"Created directory {output_dir}")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--template", type=str, required=True,
@@ -98,7 +105,8 @@ if __name__ == "__main__":
                                  "that_nounpp_adv", "noun_conj", "s_conj"],
                         help="The template of the output sentences.")
     parser.add_argument("-o", "--output", type=str, default="generated_data",
-                        help="Directory to store the generated data.")
+                        help="Directory to store the full generated data.")
+    parser.add_argument("--sample", default=False)
     parser.add_argument("--adverbs1_num", type=int, default=-1,
                         help="Maximum number of adverbs to use.")
     parser.add_argument("--position_nouns_num", type=int, default=-1,
