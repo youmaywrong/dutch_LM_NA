@@ -17,6 +17,7 @@ def get_grammar(start, grammar):
 
     return g, p
 
+
 def get_opposite_number(grammatical_number):
     """
     Args:
@@ -29,9 +30,11 @@ def get_opposite_number(grammatical_number):
         sys.exit("Grammatical number is not singular or plural.")
     return "sgpl".replace(grammatical_number, "")
 
+
 def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         object_nouns, position_nouns, prepositions, adverbs, proper_nouns,
-        quantity_nouns, quantity_subject_nouns, relative_pronouns, conjunctions, verbs_modal):
+        quantity_nouns, quantity_subject_nouns, relative_pronouns, conjunctions,
+        verbs_modal):
     """
     Generate a Feature-Based Grammar and output valid starting symbol rules for
     that grammar.
@@ -136,8 +139,6 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         for num1 in conditions:
             wrong_num = get_opposite_number(num1)
             for num2 in conditions:
-                # Mention the second number first, as we are tracking the number
-                # agreement for that noun
                 correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
                         f"V_that[AGR={num1}] NP[AGR={num2}]'*' "\
                         f"VP_intrans[AGR={num2}]'^' "
@@ -149,8 +150,6 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         for num1 in conditions:
             wrong_num = get_opposite_number(num1)
             for num2 in conditions:
-                # Mention the second number first, as we are tracking the number
-                # agreement for that noun
                 correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
                         f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
                         f"VP[AGR={num2}]'^' "
@@ -162,8 +161,6 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         for num1 in conditions:
             wrong_num = get_opposite_number(num1)
             for num2 in conditions:
-                # Mention the second number first, as we are tracking the number
-                # agreement for that noun
                 correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
                         f"V_that[AGR={num1}] NP[AGR={num2}]'*' ADV COMPL "\
                         f"VP[AGR={num2}]'^' "
@@ -176,8 +173,6 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
             wrong_num = get_opposite_number(num1)
             for num2 in conditions:
                 for num3 in conditions:
-                    # Mention the second number first, as we are tracking the number
-                    # agreement for that noun
                     correct[f"{num1}_{num2}_{num3}"] =\
                             f"S -> NP_obj[AGR={num2}] "\
                             f"V_that[AGR={num2}] NP[AGR={num1}]'*' "\

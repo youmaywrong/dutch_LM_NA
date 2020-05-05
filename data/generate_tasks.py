@@ -88,12 +88,6 @@ def post_process(sentence):
 
     return incomplete, str(subject_index), str(verb_index), complete
 
-# def sample_from_file(template):
-#     output_dir = "tasks"
-#     if not os.path.exists(output_dir):
-#         os.makedirs(output_dir)
-#         print(f"Created directory {output_dir}")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
