@@ -205,9 +205,9 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
         for num1 in conditions:
             wrong_num = get_opposite_number(num1)
             correct[f"{num1}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
-                    f"V_intrans[AGR={num1}] VP[AGR={num1}]'^' COMPL"
+                    f"V_intrans[AGR={num1}] ',' VP[AGR={num1}]'^' COMPL"
             incorrect[f"{num1}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
-                    f"V_intrans[AGR={num1}] VP[AGR={wrong_num}]'^' COMPL"\
+                    f"V_intrans[AGR={num1}] ',' VP[AGR={wrong_num}]'^' COMPL"\
 
     elif template == "rel_nondef":
         for num1 in conditions:
