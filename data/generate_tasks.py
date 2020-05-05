@@ -35,6 +35,22 @@ def read_words(filename, n=-1):
 
 
 def generate_dataset(grammar, correct, incorrect):
+    """
+    Generate data with correct and incorrect number-verb agreement.
+
+    Args:
+        grammar (str): NLTK feature grammar
+        correct (dict): for each number condition (key) a start symbol rule
+                        (value) to create sentences with noun-verb agreement
+        incorrect (dict): for each number condition (key) a start symbol rule
+                        (value) to create sentences with incorrect verb number
+
+    Returns:
+        data_correct (list): tuples of (sentence, number_condition) for all
+                            correct sentences
+        data_incorrect (list): tuples of (sentence, number_condition) for all
+                            sentences with number-verb disagreement
+    """
     n_conditions = len(list(correct.keys())[0].split("_"))
     # Tasks that only have one noun of which we are tracking the number
     # Examples: simple, adv, qnty_simple, namepp
@@ -77,6 +93,18 @@ def generate_dataset(grammar, correct, incorrect):
 
 def post_process(sentence):
     """
+    Get index of the subject and its corresponding verb and clean up sentence.
+
+    Args:
+        sentence (str): uncapitalised string with * and ^ markers
+
+    Returns:
+        incomplete (str): sentence with first letter capitalised and ending
+                        after the verb that is to be predicted
+        subject_index (str): index of the subject
+        verb_index (str): index of the corresponding verb
+        complete (str): full sentence with capitalisation and ending with a
+                        full stop (.)
     """
     sentence = sentence[0].upper() + sentence [1:]
     subject_index = sentence.split().index("*") - 1
@@ -84,6 +112,7 @@ def post_process(sentence):
     sentence = sentence.replace(" *", "").replace(" ^", "").split()
 
     complete = " ".join(sentence) + "."
+    # Stop at the verb
     incomplete = " ".join(sentence[:verb_index+1])
 
     return incomplete, str(subject_index), str(verb_index), complete
@@ -158,6 +187,8 @@ if __name__ == "__main__":
 
     data_correct, data_incorrect = generate_dataset(grammar, correct, incorrect)
 
+    # Data comes in a tuple, with the second element indicating the condition,
+    # e.g. sg_sg, which gives n_num = 2
     n_num = len(data_correct[0][1].split("_"))
     n_num = "".join([f"\tnumber{i}" for i in range(1,n_num+1)])
     header = f"agreement\tdisagreement\tcorrect_verb\tincorrect_verb\t"\
@@ -167,6 +198,7 @@ if __name__ == "__main__":
         f.write(header)
         for (agr, num1), (disagr, num2) in zip(data_correct, data_incorrect):
             assert num1 == num2
+            # Get both correct and incorrect version of the same sentence
             agr, subject_idx, verb_idx, compl = post_process(agr)
             disagr, _, _, _ = post_process(disagr)
             corr_verb = agr.split()[int(verb_idx)]

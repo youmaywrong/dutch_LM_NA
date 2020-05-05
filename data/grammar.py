@@ -222,9 +222,9 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
             wrong_num = get_opposite_number(num1)
             for num2 in conditions:
                 correct[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
-                        f"NP_obj[AGR={num2}] VP[AGR={num2}] VP[AGR={num1}]'^' "
+                        f"NP_obj[AGR={num2}] VP[AGR={num2}] ',' VP[AGR={num1}]'^' COMPL"
                 incorrect[f"{num1}_{num2}"] = f"S -> NP[AGR={num1}]'*' 'die' "\
-                        f"NP_obj[AGR={num2}] VP[AGR={num2}] VP[AGR={wrong_num}]'^' "
+                        f"NP_obj[AGR={num2}] VP[AGR={num2}] ',' VP[AGR={wrong_num}]'^' COMPL"
 
     else:
         sys.exit("No valid template")
