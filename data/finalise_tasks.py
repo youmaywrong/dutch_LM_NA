@@ -6,10 +6,10 @@ import numpy as np
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-t", "--template", required=True)
-    parser.add_argument("-d", "--directory", default="full_data")
-    parser.add_argument("-o", "--output", default="tasks")
-    parser.add_argument("-n", "--number", default=600)
+    parser.add_argument("-t", "--template", type=str, required=True)
+    parser.add_argument("-d", "--directory", type=str, default="full_data")
+    parser.add_argument("-o", "--output", type=str, default="tasks")
+    parser.add_argument("-n", "--number", type=int, default=600)
     args = parser.parse_args()
 
     path = f"{args.directory}/{args.template}.tsv"
