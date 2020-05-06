@@ -17,8 +17,13 @@ declare -a templates=('simple'
                     'rel_nondef'
                     'rel_def_obj'
                     )
-                    
-for task in ${templates[@]}; do
-    echo Extracting predictions for $task
-    python predict.py -m model.pt -i data/tasks/$task.tsv --cuda
+
+declare -a seeds=('22'
+                 '23')
+
+for s in ${seeds[@]}; do
+    for task in ${templates[@]}; do
+        echo Extracting predictions for $task
+        python predict.py -m dutch_hidden650_batch64_dropout0.2_lr20.0_seed_$s.pt -i data/tasks/$task.tsv -o output_$s --cuda
+    done
 done
