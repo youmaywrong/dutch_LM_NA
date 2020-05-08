@@ -142,7 +142,18 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
                         f"'*' QNTY_subj PP[AGR={pp_num}] VP[AGR={wrong_num}]'^'"\
                         f" COMPL"
 
-    elif template == "that":
+    elif template == "that_trans":
+        for num1 in conditions:
+            wrong_num = get_opposite_number(num1)
+            for num2 in conditions:
+                correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
+                        f"VP[AGR={num2}]'^' "
+                incorrect[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
+                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
+                        f"VP[AGR={wrong_num}]'^'"
+
+    elif template == "that_simple":
         for num1 in conditions:
             wrong_num = get_opposite_number(num1)
             for num2 in conditions:
@@ -153,16 +164,6 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
                         f"V_that[AGR={num1}] NP[AGR={num2}]'*' "\
                         f"VP_intrans[AGR={wrong_num}]'^'"
 
-    elif template == "that_compl":
-        for num1 in conditions:
-            wrong_num = get_opposite_number(num1)
-            for num2 in conditions:
-                correct[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
-                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
-                        f"VP[AGR={num2}]'^' "
-                incorrect[f"{num1}_{num2}"] = f"S -> NP_obj[AGR={num1}]"\
-                        f"V_that[AGR={num1}] NP[AGR={num2}]'*' COMPL "\
-                        f"VP[AGR={wrong_num}]'^'"
 
     elif template == "that_adv":
         for num1 in conditions:
@@ -183,11 +184,11 @@ def get_grammar_string(template, verbs_trans, verbs_intrans, subject_nouns,
                     correct[f"{num1}_{num2}_{num3}"] =\
                             f"S -> NP_obj[AGR={num2}] "\
                             f"V_that[AGR={num2}] NP[AGR={num1}]'*' "\
-                            f"PP[AGR={num3}] COMPL VP[AGR={num1}]'^' "
+                            f"PP[AGR={num3}] VP_intrans[AGR={num1}]'^' "
                     incorrect[f"{num1}_{num2}_{num3}"] =\
                             f"S -> NP_obj[AGR={num2}] "\
                             f"V_that[AGR={num2}] NP[AGR={num1}]'*' "\
-                            f"PP[AGR={num3}] COMPL VP[AGR={wrong_num}]'^' "\
+                            f"PP[AGR={num3}] VP_intrans[AGR={wrong_num}]'^' "\
 
     elif template == "noun_conj":
         for num1 in conditions:
