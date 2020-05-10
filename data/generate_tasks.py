@@ -121,12 +121,6 @@ def post_process(sentence):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--template", type=str, required=True,
-                        choices=["simple", "nounpp", "nounpp_adv", "namepp",
-                                 "adv", "qnty_simple", "verb_conj",
-                                 "qnty_nounpp", "qnty_namepp", "that",
-                                 "that_compl", "that_adv", "that_nounpp",
-                                 "that_nounpp_adv", "noun_conj", "s_conj",
-                                 "rel_def", "rel_def_obj", "rel_nondef"],
                         help="The template of the output sentences.")
     parser.add_argument("-o", "--output", type=str, default="full_data",
                         help="Directory to store the full generated data.")

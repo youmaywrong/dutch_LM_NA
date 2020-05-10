@@ -9,21 +9,21 @@ import copy
 from tqdm import tqdm
 from torch.autograd import Variable
 
-def feed_input(model, hidden, word, cuda):
+def feed_input(model, hidden, word, vocab, cuda):
     input = torch.autograd.Variable(torch.LongTensor([[vocab.word2idx[word]]]))
     if cuda:
         input = input.cuda()
     output, hidden = model(input, hidden)
     return output, hidden
 
-def feed_sentence(model, hidden, sentence, cuda):
+def feed_sentence(model, hidden, sentence, vocab, cuda):
     outputs = []
     for word in sentence:
-        out, hidden = feed_input(model, hidden, word, cuda)
+        out, hidden = feed_input(model, hidden, word, vocab, cuda)
         outputs.append(torch.nn.functional.log_softmax(out[0]).unsqueeze(0))
     return outputs, hidden
 
-def get_predictions(sentences, model, init_out, init_h, cuda):
+def get_predictions(data, sentences, model, init_out, init_h, vocab, cuda):
     # Initialise log probabilities at 0
     log_p_targets_correct = np.zeros((len(sentences), 1))
     log_p_targets_wrong = np.zeros((len(sentences), 1))
@@ -39,7 +39,7 @@ def get_predictions(sentences, model, init_out, init_h, cuda):
                 token = args.unk
 
             input = Variable(torch.LongTensor([[vocab.word2idx[token]]]))
-            if args.cuda:
+            if cuda:
                 input = input.cuda()
 
             out, hidden = model(input, hidden)
@@ -51,7 +51,7 @@ def get_predictions(sentences, model, init_out, init_h, cuda):
 
     return log_p_targets_correct, log_p_targets_wrong
 
-def categorise_predictions(data, log_p_targets_correct, log_p_targets_wrong):
+def categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets_wrong):
     nums = sum("number" in col for col in list(data))
     options = ["singular", "plural"]
 
@@ -139,12 +139,12 @@ if __name__ == "__main__":
     # (Do not start in the original state)
     init_sentence = " ".join([". <eos>"] * 5)
     hidden = model.init_hidden(1)
-    init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "), args.cuda)
+    init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "), vocab, args.cuda)
 
     log_p_targets_correct, log_p_targets_wrong =\
-        get_predictions(sentences, model, init_out, init_h, args.cuda)
+        get_predictions(data, sentences, model, init_out, init_h, vocab, args.cuda)
 
-    out = categorise_predictions(data, log_p_targets_correct, log_p_targets_wrong)
+    out = categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets_wrong)
 
     template = args.input.split("/")[-1].replace(".tsv", "")
     with open(os.path.join(args.output, f"{template}.info"), "wb") as f:
