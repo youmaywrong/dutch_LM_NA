@@ -47,15 +47,16 @@ model = load_model(args.model, args.cuda)
 
 # If there are units to ablate
 if args.unit > -1:
-    output_fn = f"ablation_{args.unit}.info"
-    target_unit = torch.LongTensor(np.array([[int(args.unit)]]))
-    if args.cuda:
-        target_unit.cuda()
-
     if args.unit < 650:
+        target_unit = torch.LongTensor(np.array([[int(args.unit)]]))
+        if args.cuda:
+            target_unit.cuda()
         model.rnn.weight_hh_l0.data[:, target_unit] = 0
 
-    elif args.unit > 649 and arg.unit < 1300:
+    elif args.unit > 649 and args.unit < 1300:
+        target_unit = torch.LongTensor(np.array([[int(args.unit)-650]]))
+        if args.cuda:
+            target_unit.cuda()
         model.rnn.weight_hh_l1.data[:, target_unit] = 0
         model.decoder.weight.data[:, target_unit] = 0
 
@@ -71,9 +72,24 @@ init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "), vocab,
 
 log_p_targets_correct, log_p_targets_wrong =\
     get_predictions(data, sentences, model, init_out, init_h, vocab, args.cuda)
-out = categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets_wrong)
+out = categorise_predictions(data, sentences, log_p_targets_correct,
+    log_p_targets_wrong)
 
 template = args.input.split("/")[-1].replace(".tsv", "")
+info = {}
+
+try:
+    with open(os.path.join(args.output, output_fn), "rb") as f:
+        info = pickle.load(f)
+except Exception:
+    pass
+
+if args.unit > -1:
+    info[str(args.unit)] = out
+else:
+    info = out
+
 with open(os.path.join(args.output, output_fn), "wb") as f:
-    pickle.dump(out, f, -1)
+    pickle.dump(info, f, -1)
+
 print(f"Information saved to {args.output}/{output_fn}\n")

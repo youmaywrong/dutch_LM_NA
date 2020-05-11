@@ -23,7 +23,7 @@ def feed_sentence(model, hidden, sentence, vocab, cuda):
         outputs.append(torch.nn.functional.log_softmax(out[0]).unsqueeze(0))
     return outputs, hidden
 
-    
+
 def load_model(model_file, cuda):
     # Load model
     model = torch.load(model_file, map_location=lambda storage, loc: storage)
@@ -82,8 +82,6 @@ def categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets
         'log_p_targets_wrong': log_p_targets_wrong,
         'score_on_task': score_on_task,
         'accuracy_score_on_task': score_on_task,
-        'sentences': sentences,
-        'num_sentences': len(sentences)
     }
 
     if nums == 1:
