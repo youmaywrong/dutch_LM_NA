@@ -34,8 +34,8 @@ args = parser.parse_args()
 
 if not os.path.exists(args.output):
     os.makedirs(args.output)
-
-output_fn = f"ablation_{args.unit}.info"
+template = args.input.split("/")[-1].replace(".tsv", "")
+output_fn = f"{template}.info"
 
 # Create Dictionary object from the vocabulary
 vocab = data.Dictionary(args.vocabulary)
@@ -43,36 +43,31 @@ data = pandas.read_csv(args.input, sep="\t", header=0)
 header = list(data)
 sentences = data.loc[:, "agreement"]
 
-# Load model
-model = torch.load(args.model, map_location=lambda storage, loc: storage)
-if args.cuda:
-    model.cuda()
-model.rnn.flatten_parameters()
+model = load_model(args.model, args.cuda)
 
-# Send extra argument with model parameters to forward function
-model.rnn.forward = lambda input, hidden: lstm.forward(model.rnn, input, hidden)
-model_original = copy.deepcopy(model.state_dict())
-model.load_state_dict(model_original)
+# If there are units to ablate
+if args.unit > -1:
+    output_fn = f"ablation_{args.unit}.info"
+    target_unit = torch.LongTensor(np.array([[int(args.unit)]]))
+    if args.cuda:
+        target_unit.cuda()
 
-target_unit = torch.LongTensor(np.array([[int(args.unit)]]))
-if args.cuda:
-    target_unit.cuda()
+    if args.unit < 650:
+        model.rnn.weight_hh_l0.data[:, target_unit] = 0
 
-if args.unit < 650:
-    model.rnn.weight_hh_l0.data[:, target_unit] = 0
+    elif args.unit > 649 and arg.unit < 1300:
+        model.rnn.weight_hh_l1.data[:, target_unit] = 0
+        model.decoder.weight.data[:, target_unit] = 0
 
-elif args.unit > 649 and arg.unit < 1300:
-    model.rnn.weight_hh_l1.data[:, target_unit] = 0
-    model.decoder.weight.data[:, target_unit] = 0
-
-else:
-    sys.exit("Invalid unit number")
+    else:
+        sys.exit("Invalid unit number")
 
 # Initial sentences are all . <eos>, feed these to the model
 # (Do not start in the original state)
 init_sentence = " ".join([". <eos>"] * 5)
 hidden = model.init_hidden(1)
-init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "), vocab, args.cuda)
+init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "), vocab,
+    args.cuda)
 
 log_p_targets_correct, log_p_targets_wrong =\
     get_predictions(data, sentences, model, init_out, init_h, vocab, args.cuda)

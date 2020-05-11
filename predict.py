@@ -23,6 +23,22 @@ def feed_sentence(model, hidden, sentence, vocab, cuda):
         outputs.append(torch.nn.functional.log_softmax(out[0]).unsqueeze(0))
     return outputs, hidden
 
+    
+def load_model(model_file, cuda):
+    # Load model
+    model = torch.load(model_file, map_location=lambda storage, loc: storage)
+    if cuda:
+        model.cuda()
+    model.rnn.flatten_parameters()
+
+    # Send extra argument with model parameters to forward function
+    model.rnn.forward = lambda input, hidden: lstm.forward(model.rnn, input, hidden)
+    model_original = copy.deepcopy(model.state_dict())
+    model.load_state_dict(model_original)
+
+    return model
+
+
 def get_predictions(data, sentences, model, init_out, init_h, vocab, cuda):
     # Initialise log probabilities at 0
     log_p_targets_correct = np.zeros((len(sentences), 1))
@@ -50,6 +66,7 @@ def get_predictions(data, sentences, model, init_out, init_h, vocab, cuda):
                 log_p_targets_wrong[i] = out[0, 0, vocab.word2idx[data.loc[i, "incorrect_verb"]]].data.item()
 
     return log_p_targets_correct, log_p_targets_wrong
+
 
 def categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets_wrong):
     nums = sum("number" in col for col in list(data))
@@ -101,52 +118,3 @@ def categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets
     print('p_difference: %1.3f +- %1.3f' % (score_on_task_p_difference, score_on_task_p_difference_std))
 
     return info
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", type=str, default="model.pt",
-        help="Path to the model (meta file) to use")
-    parser.add_argument("-i", "--input", type=str, required=True,
-        help="Path to input sentences (NA task)")
-    parser.add_argument("-v", "--vocabulary", type=str,
-        default="data/vocabulary/vocab.txt",
-        help="Path to vocabulary of the training corpus")
-    parser.add_argument("-o", "--output", default="output",
-        help="Directory for the output")
-    parser.add_argument("--eos", default="<eos>", help="End-of-sentence token")
-    parser.add_argument("--unk", default="<unk>", help="Unknown-word token")
-    parser.add_argument("--cuda", action="store_true", default=False)
-    args = parser.parse_args()
-
-    # Obtain vocabulary and task sentences
-    vocab = data.Dictionary(args.vocabulary)
-    data = pandas.read_csv(args.input, sep="\t", header=0)
-    header = list(data)
-    sentences = data.loc[:, "agreement"]
-
-    # Load model
-    model = torch.load(args.model, map_location=lambda storage, loc: storage)
-    if args.cuda:
-        model.cuda()
-    model.rnn.flatten_parameters()
-
-    # Send extra argument with model parameters to forward function
-    model.rnn.forward = lambda input, hidden: lstm.forward(model.rnn, input, hidden)
-    model_original = copy.deepcopy(model.state_dict())
-    model.load_state_dict(model_original)
-
-    # Initial sentences are all . <eos>, feed these to the model
-    # (Do not start in the original state)
-    init_sentence = " ".join([". <eos>"] * 5)
-    hidden = model.init_hidden(1)
-    init_out, init_h = feed_sentence(model, hidden, init_sentence.split(" "), vocab, args.cuda)
-
-    log_p_targets_correct, log_p_targets_wrong =\
-        get_predictions(data, sentences, model, init_out, init_h, vocab, args.cuda)
-
-    out = categorise_predictions(data, sentences, log_p_targets_correct, log_p_targets_wrong)
-
-    template = args.input.split("/")[-1].replace(".tsv", "")
-    with open(os.path.join(args.output, f"{template}.info"), "wb") as f:
-        pickle.dump(out, f, -1)
-    print(f"Information saved to {args.output}/{template}.info\n")
