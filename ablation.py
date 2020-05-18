@@ -21,6 +21,8 @@ parser.add_argument("-v", "--vocabulary", type=str,
     help="Vocabulary of the training corpus that the model was trained on")
 parser.add_argument("-u", "--unit", type=int, default=-1,
     help="Network unit to ablate")
+parser.add_argument("--range_end", type=int, default=-1,
+    help="End (inclusive) of the range of units to ablate")
 parser.add_argument("-s", "--seed", type=int, default=5,
     help="Random seed for adding random units")
 parser.add_argument("--number_of_units", type=int, default=1300)
@@ -44,17 +46,32 @@ header = list(data)
 sentences = data.loc[:, "agreement"]
 
 model = load_model(args.model, args.cuda)
+units = []
+# if 1300 > args.unit > -1:
+#     units = [args.unit]
+#     if 1300 > args.range_end > args.unit:
+#         units = [[x] for x in range(args.unit, args.range_end+1)]
 
-# If there are units to ablate
-if args.unit > -1:
-    if args.unit < 650:
-        target_unit = torch.LongTensor(np.array([[int(args.unit)]]))
+
+# for u in units:
+#     print(u)
+
+# units = []
+if 1300 > args.unit > -1:
+    units = [args.unit]
+    if 1300 > args.range_end > args.unit:
+        units = list(range(args.unit, args.range_end+1))
+
+# Will be skipped if there are no units to ablate
+for u in units:
+    if u < 650:
+        target_unit = torch.LongTensor(np.array([[int(u)]]))
         if args.cuda:
             target_unit.cuda()
         model.rnn.weight_hh_l0.data[:, target_unit] = 0
 
-    elif args.unit > 649 and args.unit < 1300:
-        target_unit = torch.LongTensor(np.array([[int(args.unit)-650]]))
+    elif 1300 > u > 649:
+        target_unit = torch.LongTensor(np.array([[int(u)-650]]))
         if args.cuda:
             target_unit.cuda()
         model.rnn.weight_hh_l1.data[:, target_unit] = 0
@@ -62,6 +79,7 @@ if args.unit > -1:
 
     else:
         sys.exit("Invalid unit number")
+
 
 # Initial sentences are all . <eos>, feed these to the model
 # (Do not start in the original state)
@@ -84,7 +102,9 @@ try:
 except Exception:
     pass
 
-if args.unit > -1:
+if args.range_end > args.unit > -1:
+    info[f"{args.unit}-{args.range_end}"] = out
+elif args.unit > -1:
     info[str(args.unit)] = out
 else:
     info = out

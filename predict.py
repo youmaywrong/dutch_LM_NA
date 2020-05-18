@@ -52,7 +52,7 @@ def get_predictions(data, sentences, model, init_out, init_h, vocab, cuda):
         for j, token in enumerate(sentence):
             # Unknown word
             if token not in vocab.word2idx:
-                token = args.unk
+                token = "<unk>"
 
             input = Variable(torch.LongTensor([[vocab.word2idx[token]]]))
             if cuda:
