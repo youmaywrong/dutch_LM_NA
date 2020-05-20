@@ -17,7 +17,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     data = read_results(args.input)
-
+    print(data)
     df = pd.DataFrame(columns=["SS", "SP", "PS", "PP"])
     for k in list(data):
         res = data[k]

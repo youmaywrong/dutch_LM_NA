@@ -47,14 +47,6 @@ sentences = data.loc[:, "agreement"]
 
 model = load_model(args.model, args.cuda)
 units = []
-# if 1300 > args.unit > -1:
-#     units = [args.unit]
-#     if 1300 > args.range_end > args.unit:
-#         units = [[x] for x in range(args.unit, args.range_end+1)]
-
-
-# for u in units:
-#     print(u)
 
 # units = []
 if 1300 > args.unit > -1:
