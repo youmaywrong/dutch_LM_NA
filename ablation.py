@@ -11,7 +11,7 @@ from torch.autograd import Variable
 from predict import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-m", "--model", type=str, default="model.pt",
+parser.add_argument("-m", "--model", type=str, default="models/model.pt",
     help="Model (meta file) to use")
 parser.add_argument("-i", "--input", type=str, required=True,
     help="Input sentences (tsv file)")
@@ -48,7 +48,6 @@ sentences = data.loc[:, "agreement"]
 model = load_model(args.model, args.cuda)
 units = []
 
-# units = []
 if 1300 > args.unit > -1:
     units = [args.unit]
     if 1300 > args.range_end > args.unit:
